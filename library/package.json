@@ -1,0 +1,15 @@
+{
+  "name": "library",
+  "version": "1.0.0",
+  "description": "small library for part8 of full stack open",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Juan Córica",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^3.10.3",
+    "graphql": "^16.6.0"
+  }
+}
