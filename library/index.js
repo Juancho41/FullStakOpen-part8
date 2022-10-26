@@ -1,4 +1,6 @@
+const { v1: uuid } = require('uuid')
 const { ApolloServer, gql } = require('apollo-server')
+const { UniqueDirectiveNamesRule } = require('graphql')
 
 let authors = [
     {
@@ -114,6 +116,15 @@ const typeDefs = gql`
         allBooks(author: String, genre: [String!]): [Book]
         allAuthors: [Author]
     }
+
+    type Mutation {
+        addBook(
+            title: String!
+            published: Int!
+            author: String!
+            genres: [String!]
+        ): Book
+    }
 `
 
 const resolvers = {
@@ -124,7 +135,11 @@ const resolvers = {
         allBooks: (root, args) => {
             if (args.author && args.genre) {
                 console.log('los 2')
-                return books.filter((p) => p.author === args.author && p.genres.includes(...args.genre))
+                return books.filter(
+                    (p) =>
+                        p.author === args.author &&
+                        p.genres.includes(...args.genre)
+                )
             } else if (args.author) {
                 console.log('author')
                 return books.filter((p) => p.author === args.author)
@@ -134,13 +149,26 @@ const resolvers = {
             } else {
                 return books
             }
-
         },
     },
 
     Author: {
         bookCount: (root) => {
             return books.filter((b) => b.author == root.name).length
+        },
+    },
+
+    Mutation: {
+        addBook: (root, args) => {
+            const book = { ...args, id: uuid() }
+            console.log(authors)
+            if (authors.filter((a) => book.author !== a.name)) {
+                console.log('new author')
+                const author = { name: book.author, id: uuid() }
+                authors = authors.concat(author)
+            }
+            books = books.concat(book)
+            return book
         },
     },
 }
